@@ -5,13 +5,13 @@ import {
 
 const data = [
   {
-    name: 'Small', average: 10, pull_request: 10,
+    name: 'Small', Average: 10, pull_request: 10,
   },
   {
-    name: 'Medium', average: 28, pull_request: 50,
+    name: 'Medium', Average: 28, pull_request: 50,
   },
   {
-    name: 'Large', average: 48, pull_request: 100,
+    name: 'Large', Average: 48, pull_request: 100,
   },
 ];
 
@@ -24,9 +24,9 @@ export default function index() {
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
-        <YAxis dataKey="average" />
+        <YAxis dataKey="Average" />
         <Tooltip />
-        <Bar dataKey="average" fill="#8884d8" />
+        <Bar dataKey="Average" fill="#4B9BFF" />
       </BarChart>
     </ResponsiveContainer>
   );

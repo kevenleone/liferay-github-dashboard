@@ -37,7 +37,7 @@ export default function ChartLine() {
       <LineChart
         data={data}
         margin={{
-          top: 5, right: 30, left: 20, bottom: 5,
+          top: 5, right: 30, bottom: 5,
         }}
       >
         <CartesianGrid strokeDasharray="4 4" />

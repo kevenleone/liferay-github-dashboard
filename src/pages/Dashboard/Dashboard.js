@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { If, Then, Else } from 'react-if';
 import { Row, Col } from 'reactstrap';
 
-import Card from '../../components/Card';
-import BarChart from '../../components/Charts/Bar';
 import LineChart from '../../components/Charts/Line';
+import BarChart from '../../components/Charts/Bar';
+import Card from '../../components/Card';
 import './Dashboard.scss';
 
 export default function Dashboard() {
+  const [summaryOption, setSummaryOption] = useState('Pull Requests');
+  const summaryOptions = ['Pull Requests', 'Issues'];
   return (
     <div className="Dashboard">
       <Row>
@@ -35,7 +38,31 @@ export default function Dashboard() {
       <Row>
         <Col>
           <Card title="Month Summary">
-            <LineChart />
+            <Row className="month-summary">
+              <Col xs={2}>
+                <Row>
+                  { summaryOptions.map((summary, index) => (
+                    <Col key={summary} className={summaryOption === summary ? 'active' : ''}>
+                      <button
+                        type="button"
+                        onClick={() => setSummaryOption(summary)}
+                      >
+                        {summary}
+                      </button>
+                      <p>{38 * (index + 1)}</p>
+                    </Col>
+                  )) }
+                </Row>
+              </Col>
+            </Row>
+            <If condition={summaryOption === 'Pull Requests'}>
+              <Then>
+                <LineChart />
+              </Then>
+              <Else>
+                <LineChart />
+              </Else>
+            </If>
           </Card>
         </Col>
       </Row>

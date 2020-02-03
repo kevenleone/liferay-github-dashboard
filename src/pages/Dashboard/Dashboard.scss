@@ -11,4 +11,31 @@
       font-size: 66px;
     }
   }
+
+  .month-summary {
+    margin: -20px 0px 20px 30px;
+    color: #555;
+
+    div.active {
+      border-top: 3px solid #0B5FFF !important;
+      color: #111;
+
+      button {
+        color: #111;
+        font-weight: 400;
+      }
+    }
+
+    p {
+      font-size: 46px;
+    }
+
+    button, button:focus {
+      background-color: transparent;
+      color: #555;
+      font-weight: 300;
+      margin-left: -10px;
+      border: none;
+    }
+  }
 }
