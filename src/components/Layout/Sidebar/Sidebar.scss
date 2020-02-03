@@ -1,0 +1,19 @@
+.Sidebar {
+  section {
+    z-index: 1;
+    background-color: #30313F;
+    width: 100px;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    position: fixed;
+    
+    .logo {
+      text-align: center; 
+      margin-top: 30px;
+      img {
+        width: 40px;  
+      }
+    }
+  }
+}

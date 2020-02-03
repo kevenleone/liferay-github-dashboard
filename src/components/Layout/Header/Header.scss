@@ -1,0 +1,18 @@
+.Header {
+  height: 100px;
+  background-color: white;
+  margin-left: 100px;
+
+  .heading {
+    padding: 20px 0px 0px 30px;
+
+    h3 {
+      color: #333;
+    }
+
+    small {
+      color: #999;
+      font-size: 16px;
+    }
+  }
+}  

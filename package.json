@@ -1,5 +1,7 @@
 {
   "name": "liferay-github",
+  "author": "Keven Leone <keven.santos.sz@gmail.com>",
+  "repository": "https://github.com/kevenleone/liferay-github-dashboard.git",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -8,6 +10,7 @@
     "@testing-library/user-event": "^7.1.2",
     "bootstrap": "^4.4.1",
     "node-sass": "^4.13.1",
+    "prop-types": "^15.7.2",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.1.2",
