@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { If, Then, Else } from 'react-if';
 import { Row, Col } from 'reactstrap';
 
-import LineChart from '../../components/Charts/Line';
-import BarChart from '../../components/Charts/Bar';
+import { LineChart, BarChart, Text } from '../../components/Charts';
 import Card from '../../components/Card';
 import './Dashboard.scss';
 
 export default function Dashboard() {
+  const dispatch = useDispatch();
   const [summaryOption, setSummaryOption] = useState('Pull Requests');
   const summaryOptions = ['Pull Requests', 'Issues'];
+
+  useEffect(() => {
+    dispatch({ type: 'GET_PULL_REQUESTS_SAGA' });
+  });
+
   return (
     <div className="Dashboard">
       <Row>
@@ -21,18 +27,10 @@ export default function Dashboard() {
       </Row>
       <Row>
         <Col>
-          <Card title="Average Pull Request Merge Time">
-            <div className="time">
-              <p>1day 2h30m</p>
-            </div>
-          </Card>
+          <Text title="Average Pull Request Merge Time" data="1day 2h30m" />
         </Col>
         <Col>
-          <Card title="Average Issue Close Time">
-            <div className="time">
-              <p>5days 3h25m</p>
-            </div>
-          </Card>
+          <Text title="Average Issue Close Time" data="5days 3h25" />
         </Col>
       </Row>
       <Row>
