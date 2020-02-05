@@ -26,6 +26,3 @@ You can check the application online on -> https://liferay-github-dashboard.netl
 - `npm start` - start the application with hot-reload at `http://localhost:3000`
 - `npm run build` - Generate a application bundle and a `build` folder.
 - `npm run test` - Disabled for now
-
-## :book: License
-MIT license, Copyright (c) 2020 Keven Leone.

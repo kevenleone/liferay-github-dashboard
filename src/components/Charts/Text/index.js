@@ -1,24 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Card from '../../Card';
 
-export default function Text({ data, title }) {
+export default function Text({ data }) {
   return (
-    <Card title={title}>
-      <div className="time">
-        <p>{data}</p>
-      </div>
-    </Card>
+    <div className="time">
+      <p>{data}</p>
+    </div>
   );
 }
 
-
 Text.propTypes = {
   data: PropTypes.string,
-  title: PropTypes.string,
 };
 
 Text.defaultProps = {
   data: '',
-  title: '',
 };

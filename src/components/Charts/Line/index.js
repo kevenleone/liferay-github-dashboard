@@ -1,34 +1,15 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 
-const data = [
-  {
-    name: '10 Feb', Merged: 400, Opened: 240, Closed: 240,
-  },
-  {
-    name: '11 Feb', Merged: 300, Opened: 138, Closed: 220,
-  },
-  {
-    name: '12 Feb', Merged: 200, Opened: 980, Closed: 220,
-  },
-  {
-    name: '13 Feb', Merged: 278, Opened: 398, Closed: 200,
-  },
-  {
-    name: '14 Feb', Merged: 189, Opened: 480, Closed: 211,
-  },
-  {
-    name: '15 Feb', Merged: 239, Opened: 380, Closed: 250,
-  },
-  {
-    name: '16 Feb', Merged: 349, Opened: 430, Closed: 210,
-  },
-];
+import { constants, normalizeToArray } from '../../../utils';
 
-
-export default function ChartLine() {
+const { chart: { colors } } = constants;
+export default function ChartLine({
+  data, lines, xAxis, yAxis,
+}) {
   return (
     <ResponsiveContainer
       width="100%"
@@ -41,14 +22,37 @@ export default function ChartLine() {
         }}
       >
         <CartesianGrid strokeDasharray="4 4" />
-        <XAxis dataKey="name" />
-        <YAxis />
+        { normalizeToArray(xAxis).map((x) => <XAxis key={x} dataKey={x} />) }
+        { normalizeToArray(yAxis).map((y) => <YAxis key={y} dataKey={y} />) }
+        { normalizeToArray(lines).map((line, index) => (
+          <Line type="natural" strokeWidth={2} dataKey={line} stroke={colors[index]} activeDot={{ r: 8 }} />
+        )) }
         <Tooltip />
-        <Line type="natural" strokeWidth={2} dataKey="Opened" stroke="green" activeDot={{ r: 8 }} />
-        <Line type="natural" strokeWidth={2} dataKey="Merged" stroke="purple" />
-        <Line type="natural" strokeWidth={2} dataKey="Closed" stroke="red" />
         <Legend iconSize={10} iconType="circle" />
       </LineChart>
     </ResponsiveContainer>
   );
 }
+
+ChartLine.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.object),
+  lines: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
+  xAxis: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
+  yAxis: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
+};
+
+ChartLine.defaultProps = {
+  data: [],
+  lines: [],
+  xAxis: [],
+  yAxis: [],
+};

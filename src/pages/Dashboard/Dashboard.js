@@ -1,37 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { If, Then, Else } from 'react-if';
 import { Row, Col } from 'reactstrap';
 
-import { LineChart, BarChart, Text } from '../../components/Charts';
+import { LineChart } from '../../components/Charts';
 import Card from '../../components/Card';
+import charts from '../../utils/charts';
 import './Dashboard.scss';
 
 export default function Dashboard() {
   const dispatch = useDispatch();
+  const { dashboard } = useSelector((state) => state.github);
   const [summaryOption, setSummaryOption] = useState('Pull Requests');
   const summaryOptions = ['Pull Requests', 'Issues'];
 
   useEffect(() => {
     dispatch({ type: 'GET_PULL_REQUESTS_SAGA' });
-  });
+  }, [dispatch]);
 
   return (
     <div className="Dashboard">
       <Row>
-        <Col>
-          <Card title="Average Merge Time by Pull Request Size">
-            <BarChart />
-          </Card>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <Text title="Average Pull Request Merge Time" data="1day 2h30m" />
-        </Col>
-        <Col>
-          <Text title="Average Issue Close Time" data="5days 3h25" />
-        </Col>
+        { charts.map(({
+          key, title, cols, chart: { Component, props },
+        }) => (
+          <Col key={key} {...cols}>
+            <Card title={title}>
+              <Component data={dashboard[key].data} {...props} />
+            </Card>
+          </Col>
+        ))}
       </Row>
       <Row>
         <Col>

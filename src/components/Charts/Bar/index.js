@@ -1,33 +1,49 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
 } from 'recharts';
+import { constants, normalizeToArray } from '../../../utils';
 
-const data = [
-  {
-    name: 'Small', Average: 10, pull_request: 10,
-  },
-  {
-    name: 'Medium', Average: 28, pull_request: 50,
-  },
-  {
-    name: 'Large', Average: 48, pull_request: 100,
-  },
-];
+const { chart: { colors } } = constants;
 
-
-export default function index() {
+export default function BarComponent({
+  data, bars, xAxis, yAxis,
+}) {
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <BarChart
-        data={data}
-      >
+      <BarChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis dataKey="Average" />
         <Tooltip />
-        <Bar dataKey="Average" fill="#4B9BFF" />
+        { normalizeToArray(xAxis).map((x) => <XAxis key={x} dataKey={x} />) }
+        { normalizeToArray(yAxis).map((y) => <YAxis key={y} dataKey={y} />) }
+        { normalizeToArray(bars).map((bar, index) => (
+          <Bar key={bar} dataKey={bar} fill={colors[index]} />
+        )) }
       </BarChart>
     </ResponsiveContainer>
   );
 }
+
+BarComponent.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.object),
+  bars: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
+  xAxis: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
+  yAxis: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
+};
+
+BarComponent.defaultProps = {
+  data: [],
+  bars: [],
+  xAxis: [],
+  yAxis: [],
+};

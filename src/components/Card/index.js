@@ -6,7 +6,7 @@ import {
 
 export default function CardIndex({ title, children }) {
   return (
-    <Card>
+    <Card className="mb-4">
       <CardHeader>
         <CardTitle>
           { title }

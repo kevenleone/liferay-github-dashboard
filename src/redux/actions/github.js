@@ -1,12 +1,25 @@
 import {
-  call, put, select,
+  put,
 } from 'redux-saga/effects';
-import api from '../../services/api';
+// import git from '../../services/git';
 
 export function* getPullRequests() {
   try {
-    const { repo } = yield select((state) => state.github);
-    const response = yield call(api.get, `/repos/${repo}/pulls?state=closed`);
+    // const { repository } = yield select((state) => state.github);
+    const response = {};
+
+
+    // const filesPromise = pullRequest.map(pr => github.pulls.listFiles({
+    //   owner: "kevenleone",
+    //   repo: "graphscript",
+    //   pull_number: pr.number
+    // }))
+
+    // const data = await Promise.all(filesPromise);
+
+
+    // const response = yield call(git.pulls.list, { ...repository });
+    // console.log(response);
     // const filesApi = (id) => `/repos/${repo}/pulls/${id}/files`;
     // const filesCall = response.data.map((pr) => call(api.get, filesApi(pr.number)));
     // const responsePullsFiles = yield all(filesCall);
