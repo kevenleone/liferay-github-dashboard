@@ -4,8 +4,6 @@
 
 <p align="center">
   <a href='https://app.netlify.com/sites/liferay-github-dashboard/deploys'><img src='https://api.netlify.com/api/v1/badges/136190dc-5fbe-4f4c-9581-6f99a3cf57c3/deploy-status' alt='Netlify Status' />
-  <a href="https://opensource.org/licenses/MIT">
-    <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" alt="License MIT">
   </a>
 </p>
 
