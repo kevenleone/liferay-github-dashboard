@@ -44,7 +44,7 @@ const INITIAL_STATE = {
     month_summary: {
       data: {
         issues: mockLine,
-        pull_requests: mockLine.slice(0, 3),
+        pull_requests: mockLine.slice(0, 5),
       },
     },
   },

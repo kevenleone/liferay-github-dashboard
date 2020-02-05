@@ -1,4 +1,6 @@
-import { BarChart, LineChart, Text } from '../components/Charts';
+import {
+  BarChart, LineChart, Tooltip, Text,
+} from '../components/Charts';
 import Tabs from '../components/Tabs';
 /**
  * File with Charts config, for dynamic rendering
@@ -57,26 +59,42 @@ export default [
     render: {
       Component: Tabs,
       props: {
-        options: [{
-          key: 'issues',
-          title: 'Issues',
-          Component: LineChart,
-          props: {
-            lines: ['Opened', 'Merged', 'Closed'],
-            xAxis: 'name',
-            yAxis: '',
+        options: [
+          {
+            key: 'pull_requests',
+            title: 'Pull Requests',
+            Component: LineChart,
+            props: {
+              customTooltip: {
+                Component: Tooltip,
+                props: {
+                  title: 'Pull Requests',
+                },
+              },
+              lines: ['Merged', 'Opened', 'Closed'],
+              colors: ['#B20BFF', '#FF3A00', '#13C600'],
+              xAxis: 'name',
+              yAxis: '',
+            },
           },
-        },
-        {
-          key: 'pull_requests',
-          title: 'Pull Requests',
-          Component: LineChart,
-          props: {
-            lines: ['Opened', 'Merged', 'Closed'],
-            xAxis: 'name',
-            yAxis: '',
+          {
+            key: 'issues',
+            title: 'Issues',
+            Component: LineChart,
+            props: {
+              customTooltip: {
+                Component: Tooltip,
+                props: {
+                  title: 'Issues',
+                },
+              },
+              lines: ['Opened', 'Closed'],
+              colors: ['#FF3A00', '#13C600'],
+              xAxis: 'name',
+              yAxis: '',
+            },
           },
-        }],
+        ],
       },
     },
   },
