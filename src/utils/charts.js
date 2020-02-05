@@ -1,11 +1,11 @@
-import { BarChart, Text } from '../components/Charts';
-
+import { BarChart, LineChart, Text } from '../components/Charts';
+import Tabs from '../components/Tabs';
 /**
  * File with Charts config, for dynamic rendering
  * key: The name of key inside dashboard (on redux state, check the file redux/reducers/github.js)
  * title: The name of Card Item
  * cols: Bootstrap cols options
- * chart: {
+ * render: {
  * props -> data sent throw the component,
  * Component -> The component that will receive the props and render
  * }
@@ -18,7 +18,7 @@ export default [
     cols: {
       xs: 12,
     },
-    chart: {
+    render: {
       props: {
         bars: ['Average'],
         xAxis: 'name',
@@ -33,7 +33,7 @@ export default [
     cols: {
       xs: 6,
     },
-    chart: {
+    render: {
       props: {},
       Component: Text,
     },
@@ -44,9 +44,38 @@ export default [
     cols: {
       xs: 6,
     },
-    chart: {
+    render: {
       props: {},
       Component: Text,
+    },
+  },
+  {
+    key: 'month_summary',
+    title: 'Month Summary',
+    render: {
+      Component: Tabs,
+      props: {
+        options: [{
+          key: 'issues',
+          title: 'Issues',
+          Component: LineChart,
+          props: {
+            lines: ['Opened', 'Merged', 'Closed'],
+            xAxis: 'name',
+            yAxis: '',
+          },
+        },
+        {
+          key: 'pull_requests',
+          title: 'Pull Requests',
+          Component: LineChart,
+          props: {
+            lines: ['Opened', 'Merged', 'Closed'],
+            xAxis: 'name',
+            yAxis: '',
+          },
+        }],
+      },
     },
   },
 ];
