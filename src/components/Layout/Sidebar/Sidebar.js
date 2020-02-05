@@ -1,5 +1,5 @@
 import React from 'react';
-import Logo from '../../../assets/liferay.png';
+import Logo from '../../../assets/logo.png';
 import './Sidebar.scss';
 
 export default function Sidebar() {

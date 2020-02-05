@@ -16,4 +16,11 @@
       }
     }
   }
+
+  @media (max-width: 500px) {
+    section {
+      display: none;
+    }
+  }
 }
+

@@ -31,7 +31,8 @@ export default [
     key: 'average_pull',
     title: 'Average Pull Request Merge Time',
     cols: {
-      xs: 6,
+      xs: 12,
+      xl: 6,
     },
     render: {
       props: {},
@@ -42,7 +43,8 @@ export default [
     key: 'average_issue',
     title: 'Average Issue Close Time',
     cols: {
-      xs: 6,
+      xs: 12,
+      xl: 6,
     },
     render: {
       props: {},

@@ -8,13 +8,16 @@
 
   .content {
     overflow: auto;
-    margin-top: 2%;
-    margin-left: 150px;
-
-    margin-right: 2%;
+    margin: 30px 20px 0px 140px;
 
     h1 {
       color: hsl(257, 27%, 26%);
+    }
+  }
+
+  @media (max-width: 500px) {
+    .content {
+      margin-left: 0px;
     }
   }
 
