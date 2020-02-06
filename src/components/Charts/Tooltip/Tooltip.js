@@ -12,14 +12,16 @@ export default function Tooltip({ title, active, payload }) {
         <hr />
         <ul className="line">
           { payload.map(({ name, color, value }) => (
-            <table>
-              <tr>
-                <td width="100px">
-                  <span style={{ color, fontSize: 22, marginRight: 10 }}>•</span>
-                  <span>{name}</span>
-                </td>
-                <td style={{ marginRight: 10 }}>{value}</td>
-              </tr>
+            <table key={name}>
+              <tbody>
+                <tr>
+                  <td width="100px">
+                    <span style={{ color, fontSize: 22, marginRight: 10 }}>•</span>
+                    <span>{name}</span>
+                  </td>
+                  <td style={{ marginRight: 10 }}>{value}</td>
+                </tr>
+              </tbody>
             </table>
           )) }
         </ul>

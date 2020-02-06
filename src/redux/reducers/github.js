@@ -24,9 +24,10 @@ const mockLine = [
 
 const INITIAL_STATE = {
   repository: {
-    owner: 'kevenleone',
-    repo: 'graphscript',
+    owner: '',
+    repo: '',
   },
+  repositories: [],
   dashboard: {
     average_merge: {
       data: [
@@ -60,6 +61,10 @@ export default function (state = INITIAL_STATE, action) {
       return { ...state, dashboard: { ...state.dashboard, average_merge: action.payload } };
     case 'SET_MONTH_SUMARY':
       return { ...state, dashboard: { ...state.dashboard, month_summary: action.payload } };
+    case 'SET_REPOSITORY_OWNER':
+      return { ...state, ...action.payload };
+    case 'SET_REPOSITORY_OWNER_REPO':
+      return { ...state, repository: { ...state.repository, repo: action.payload } };
     default:
       return { ...state };
   }

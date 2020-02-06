@@ -1,19 +1,30 @@
 .Header {
-  height: 100px;
+  height: 120px;
   background-color: white;
   margin-left: 100px;
 
   .heading {
-    padding: 20px 0px 0px 30px;
+    padding: 10px 0px 0px 20px;
+    display: flex;
+    flex-direction: column;
+  }
 
-    h3 {
-      color: #333;
-    }
+  .form-control {
+    padding: 0;
+  }
 
-    small {
-      color: #999;
-      font-size: 16px;
-    }
+  .custom-input {
+    color: #272833;
+    border: none;
+    font-size: 1.77em;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif !important;
+  }
+
+  .secondary {
+    font-size: 1.13em !important;
+    font-weight: 300;
+    color: #A7A9BC;
   }
 }  
 
