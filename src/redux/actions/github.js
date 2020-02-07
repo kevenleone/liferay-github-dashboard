@@ -1,7 +1,10 @@
 import {
   put, call,
 } from 'redux-saga/effects';
-import git from '../../services/git';
+import GitGraphQL, { queries } from '../../services';
+import { readProp } from '../../utils';
+
+const { getUser, normalizeQuery } = queries;
 
 export function* getPullRequests() {
   try {
@@ -49,20 +52,15 @@ export function* getPullRequests() {
 
 export function* getUserRepositories(action) {
   const username = action.payload;
+  const query = normalizeQuery(getUser, { username });
   try {
-    const response = yield call(git.repos.listForUser, {
-      per_page: 100,
-      username: action.payload,
+    const graphResponse = yield call(GitGraphQL, query);
+    const edges = readProp(graphResponse, 'data.repositoryOwner.repositories.edges', []);
+    const repositories = edges.map(({ node: { id, name } }) => ({ id, name }));
+    yield put({
+      type: 'SET_REPOSITORY_OWNER',
+      payload: { repositories, repository: { owner: username, repo: '' } },
     });
-    if (response.status === 200) {
-      const repositories = response.data
-        .map(({ id, name }) => ({ id, name }))
-        .sort((a, b) => a.name - b.name);
-      yield put({
-        type: 'SET_REPOSITORY_OWNER',
-        payload: { repositories, repository: { owner: username } },
-      });
-    }
   } catch (e) {
     console.log(e); //eslint-disable-line
   }

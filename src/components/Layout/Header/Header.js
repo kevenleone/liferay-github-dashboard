@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { InputGroup, Input } from 'reactstrap';
 import AutoComplete from '../../AutoComplete';
@@ -10,6 +10,12 @@ const Header = () => {
   const { repositories, repository: { repo } } = useSelector((state) => state.github);
   const [repository, setRepository] = useState(repo);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!repo) {
+      setRepository('');
+    }
+  }, [repo]);
 
   function handleClickRepository({ name }, clearValue = false) {
     setRepository(name);
