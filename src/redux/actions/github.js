@@ -1,10 +1,50 @@
 import {
-  put, call, select,
+  put, call, select, all,
 } from 'redux-saga/effects';
 import GitGraphQL, { queries } from '../../services';
-import { readProp, getAverageTime } from '../../utils';
+import {
+  readProp, getAverageTime, normalizePullRequestsMerge,
+} from '../../utils';
 
-const { getUser, getRepository, normalizeQuery } = queries;
+const {
+  getUser, getRepository, getPullRequestFiles, normalizeQuery,
+} = queries;
+
+function* getAverages({ owner, repository }) {
+  const query = normalizeQuery(getRepository, { owner, repo: repository });
+  try {
+    const graphResponse = yield call(GitGraphQL, query);
+    const issues = readProp(graphResponse, 'data.repository.issues.edges', []);
+    const pullRequests = readProp(graphResponse, 'data.repository.pullRequests.edges', []);
+    const averageIssues = getAverageTime(issues);
+    const averagePullRequests = getAverageTime(pullRequests);
+    yield put({
+      type: 'SET_AVERAGE_TIME',
+      payload:
+      { average_pull: averagePullRequests, average_issue: averageIssues },
+    });
+  } catch (e) {
+    console.log(e); //eslint-disable-line
+  }
+}
+
+
+function* getAverageMergePR({ owner, repository }) {
+  const query = normalizeQuery(getPullRequestFiles, { owner, repo: repository });
+  try {
+    const graphResponse = yield call(GitGraphQL, query);
+    const pullRequests = readProp(graphResponse, 'data.repository.pullRequests.edges', []);
+    const averageMerge = normalizePullRequestsMerge(pullRequests);
+
+    yield put({
+      type: 'SET_AVERAGE_MERGE',
+      payload: { data: averageMerge },
+    });
+  } catch (e) {
+    console.log(e); //eslint-disable-line
+  }
+}
+
 
 export function* getUserRepositories(action) {
   const username = action.payload;
@@ -28,18 +68,13 @@ export function* getUserRepository(action) {
   yield put({ type: 'SET_REPOSITORY_OWNER_REPO', payload: repository });
 
   if (repository) {
-    const query = normalizeQuery(getRepository, { owner, repo: repository });
+    const params = { owner, repository };
     try {
-      const graphResponse = yield call(GitGraphQL, query);
-      const issues = readProp(graphResponse, 'data.repository.issues.edges', []);
-      const pullRequests = readProp(graphResponse, 'data.repository.pullRequests.edges', []);
-      const averageIssues = getAverageTime(issues);
-      const averagePullRequests = getAverageTime(pullRequests);
-      yield put({
-        type: 'SET_AVERAGE_TIME',
-        payload:
-        { average_pull: averagePullRequests, average_issue: averageIssues },
-      });
+      const pipeline = [
+        call(getAverages, params),
+        call(getAverageMergePR, params),
+      ];
+      yield all(pipeline);
     } catch (e) {
       console.log(e); //eslint-disable-line
     }

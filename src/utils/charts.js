@@ -1,5 +1,5 @@
 import {
-  BarChart, LineChart, Tooltip, Text,
+  BarChart, LineChart, LineTooltip, BarTooltip, Text,
 } from '../components/Charts';
 import Tabs from '../components/Tabs';
 /**
@@ -22,9 +22,15 @@ export default [
     },
     render: {
       props: {
-        bars: ['Average'],
+        customTooltip: {
+          Component: BarTooltip,
+          props: {
+            transformValue: (key, value) => (key.includes('Time') ? `${value}h` : value),
+          },
+        },
+        bars: ['Average Time'],
         xAxis: 'name',
-        yAxis: 'Average',
+        yAxis: 'Average Time',
       },
       Component: BarChart,
     },
@@ -66,7 +72,7 @@ export default [
             Component: LineChart,
             props: {
               customTooltip: {
-                Component: Tooltip,
+                Component: LineTooltip,
                 props: {
                   title: 'Pull Requests',
                 },
@@ -83,7 +89,7 @@ export default [
             Component: LineChart,
             props: {
               customTooltip: {
-                Component: Tooltip,
+                Component: LineTooltip,
                 props: {
                   title: 'Issues',
                 },

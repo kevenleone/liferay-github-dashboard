@@ -31,6 +31,20 @@ const queries = {
           node {
             createdAt
             closedAt
+          }
+        }
+      }
+    }
+  }
+  `,
+  getPullRequestFiles: ({ owner, repo: name }) => `
+  query {
+    repository(owner: "${owner}", name: "${name}") {
+      pullRequests(first: 100, states: MERGED) {
+        edges {
+          node {
+            createdAt
+            closedAt
             files(first: 100) {
               nodes {
                 additions

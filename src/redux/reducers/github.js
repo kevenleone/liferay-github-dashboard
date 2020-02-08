@@ -31,9 +31,9 @@ const INITIAL_STATE = {
   dashboard: {
     average_merge: {
       data: [
-        { name: 'Small', Average: 10, pull_request: 10 },
-        { name: 'Medium', Average: 28, pull_request: 50 },
-        { name: 'Large', Average: 48, pull_request: 100 },
+        { name: 'Small', 'Average Time': 40, 'Pull Requests': 20 },
+        { name: 'Medium', 'Average Time': 15, 'Pull Requests': 50 },
+        { name: 'Large', 'Average Time': 65, 'Pull Requests': 100 },
       ],
     },
     average_pull: {

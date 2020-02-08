@@ -8,13 +8,20 @@ import { constants, normalizeToArray } from '../../../utils';
 const { chart: { colors } } = constants;
 
 export default function BarComponent({
-  data, bars, xAxis, yAxis,
+  data, bars, xAxis, yAxis, customTooltip,
 }) {
+  let TooltipComponent;
+  if (customTooltip) {
+    TooltipComponent = customTooltip.Component;
+  }
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
-        <Tooltip />
+        <Tooltip
+          labelStyle={{ fontSize: 18 }}
+          content={TooltipComponent ? <TooltipComponent {...customTooltip.props} /> : null}
+        />
         { normalizeToArray(xAxis).map((x) => <XAxis key={x} dataKey={x} />) }
         { normalizeToArray(yAxis).map((y) => <YAxis key={y} dataKey={y} />) }
         { normalizeToArray(bars).map((bar, index) => (
@@ -26,6 +33,10 @@ export default function BarComponent({
 }
 
 BarComponent.propTypes = {
+  customTooltip: PropTypes.shape({
+    Component: PropTypes.any,
+    props: PropTypes.any,
+  }),
   data: PropTypes.arrayOf(PropTypes.object),
   bars: PropTypes.oneOfType([
     PropTypes.string,
@@ -42,6 +53,7 @@ BarComponent.propTypes = {
 };
 
 BarComponent.defaultProps = {
+  customTooltip: null,
   data: [],
   bars: [],
   xAxis: [],

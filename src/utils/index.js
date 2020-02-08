@@ -1,22 +1,38 @@
 import constants from './constants';
 
+function getPullRequestSize(total = 0) {
+  let a = 'Large';
+  if (total <= 100) a = 'Small';
+  if (total > 100 && total <= 1000) a = 'Medium';
+  return a;
+}
+
 function timeConverter(ms) {
   const days = Math.floor(ms / (24 * 60 * 60 * 1000));
   const daysms = ms % (24 * 60 * 60 * 1000);
   const hours = Math.floor((daysms) / (60 * 60 * 1000));
   const hoursms = ms % (60 * 60 * 1000);
   const minutes = Math.floor((hoursms) / (60 * 1000));
-  return `${days}days ${hours}h${minutes}`;
+  return {
+    days, hours, hoursms, minutes, text: `${days}days ${hours}h${minutes}`,
+  };
+}
+
+function getAverage(nodes) {
+  if (nodes && nodes.length) {
+    const dates = nodes
+      .map(({ node: { createdAt, closedAt } }) => (new Date(closedAt) - new Date(createdAt)));
+    return dates.reduce((a, b) => a + b) / nodes.length;
+  }
+  return 0;
 }
 
 function getAverageTime(nodes = []) {
-  let average = { data: 'No content to show' };
-  const dates = nodes
-    .map(({ node: { createdAt, closedAt } }) => (new Date(closedAt) - new Date(createdAt)));
-  if (dates.length) {
-    average = { data: timeConverter(dates.reduce((a, b) => a + b) / nodes.length) };
+  const average = getAverage(nodes);
+  if (average) {
+    return { data: timeConverter(average).text };
   }
-  return average;
+  return { data: 'No content to show' };
 }
 
 
@@ -41,6 +57,50 @@ function readProp(object, prop, defaultValue) {
   return defaultValue;
 }
 
+function normalizePullRequestsMerge(pullRequests) {
+  const metrics = { 'Pull Requests': 0, 'Average Time': 0 };
+  const averagePR = [
+    { name: 'Small', ...metrics },
+    { name: 'Medium', ...metrics },
+    { name: 'Large', ...metrics },
+  ];
+
+  const getFilesCount = (files) => files
+    .map(({ additions, deletions }) => additions + deletions)
+    .reduce((a, b) => a + b);
+
+  const files = pullRequests
+    .map(({ node: { createdAt, closedAt, files: { nodes } } }) => {
+      const diffMergeTime = new Date(closedAt) - new Date(createdAt);
+      const sizePR = getPullRequestSize(getFilesCount(nodes));
+      return { diffMergeTime, sizePR };
+    });
+
+  files.forEach(({ diffMergeTime, sizePR }) => {
+    const options = { Small: 0, Medium: 1, Large: 2 };
+    const index = options[sizePR];
+    averagePR[index]['Average Time'] += 1;
+    averagePR[index]['Pull Requests'] += diffMergeTime;
+  });
+
+  const getHours = (ms) => Math.round((ms / (1000 * 60 * 60)));
+
+  const averageMerge = averagePR.map((average) => {
+    const content = { ...average };
+    if (average['Pull Requests']) {
+      content['Pull Requests'] = getHours(average['Pull Requests'] / average['Average Time']);
+    }
+    return content;
+  });
+
+  return averageMerge;
+}
+
 export {
-  constants, normalizeToArray, timeConverter, readProp, getAverageTime,
+  constants,
+  readProp,
+  getAverage,
+  getAverageTime,
+  normalizeToArray,
+  normalizePullRequestsMerge,
 };
