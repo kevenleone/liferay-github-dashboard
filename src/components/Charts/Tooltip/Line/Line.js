@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Tooltip.scss';
+import './Line.scss';
 
-export default function Tooltip({ title, active, payload }) {
+export default function LineTooltip({ title, active, payload }) {
   if (active) {
     return (
       <div className="custom-tooltip">
@@ -31,13 +31,13 @@ export default function Tooltip({ title, active, payload }) {
   return null;
 }
 
-Tooltip.propTypes = {
+LineTooltip.propTypes = {
   title: PropTypes.string.isRequired,
   active: PropTypes.bool,
   payload: PropTypes.arrayOf(PropTypes.object),
 };
 
-Tooltip.defaultProps = {
+LineTooltip.defaultProps = {
   active: false,
   payload: [],
 };

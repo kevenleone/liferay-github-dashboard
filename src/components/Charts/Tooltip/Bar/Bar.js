@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Tooltip.scss';
+import './Bar.scss';
 
-export default function Tooltip({ transformValue, active, payload }) {
+export default function BarTooltip({ transformValue, active, payload }) {
   if (active && payload.length) {
     const payloadBar = payload[0].payload;
     const keys = Object.keys(payloadBar)
@@ -30,13 +30,13 @@ export default function Tooltip({ transformValue, active, payload }) {
   return null;
 }
 
-Tooltip.propTypes = {
+BarTooltip.propTypes = {
   transformValue: PropTypes.func,
   active: PropTypes.bool,
   payload: PropTypes.arrayOf(PropTypes.object),
 };
 
-Tooltip.defaultProps = {
+BarTooltip.defaultProps = {
   transformValue: (_, v) => v,
   active: false,
   payload: [],

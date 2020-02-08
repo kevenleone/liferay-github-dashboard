@@ -1,5 +1,6 @@
+import { LineChart, BarChart } from 'recharts';
 import {
-  BarChart, LineChart, LineTooltip, BarTooltip, Text,
+  MainChart, LineTooltip, BarTooltip, Text,
 } from '../components/Charts';
 import Tabs from '../components/Tabs';
 /**
@@ -22,6 +23,7 @@ export default [
     },
     render: {
       props: {
+        Chart: BarChart,
         customTooltip: {
           Component: BarTooltip,
           props: {
@@ -32,7 +34,7 @@ export default [
         xAxis: 'name',
         yAxis: 'Average Time',
       },
-      Component: BarChart,
+      Component: MainChart,
     },
   },
   {
@@ -69,8 +71,9 @@ export default [
           {
             key: 'pull_requests',
             title: 'Pull Requests',
-            Component: LineChart,
+            Component: MainChart,
             props: {
+              Chart: LineChart,
               customTooltip: {
                 Component: LineTooltip,
                 props: {
@@ -86,8 +89,9 @@ export default [
           {
             key: 'issues',
             title: 'Issues',
-            Component: LineChart,
+            Component: MainChart,
             props: {
+              Chart: LineChart,
               customTooltip: {
                 Component: LineTooltip,
                 props: {

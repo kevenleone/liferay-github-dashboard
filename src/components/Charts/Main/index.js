@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { When } from 'react-if';
 import {
-  ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+  ResponsiveContainer, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 
 import { constants, normalizeToArray } from '../../../utils';
@@ -9,7 +10,7 @@ import { constants, normalizeToArray } from '../../../utils';
 const { chart: { colors: defaultColors } } = constants;
 
 export default function ChartLine({
-  data, colors, lines, xAxis, yAxis, customTooltip,
+  Chart, legend, data, bars, colors, lines, xAxis, yAxis, customTooltip,
 }) {
   let TooltipComponent;
   if (customTooltip) {
@@ -17,15 +18,18 @@ export default function ChartLine({
   }
 
   return (
-    <ResponsiveContainer
-      className="LineChart"
-      width="100%"
-      height={300}
-    >
-      <LineChart data={data}>
-        <CartesianGrid strokeDasharray="1 1" />
+    <ResponsiveContainer width="100%" height={300}>
+      <Chart data={data}>
+        <CartesianGrid strokeDasharray="1 0" />
+        <Tooltip
+          labelStyle={{ fontSize: 18 }}
+          content={TooltipComponent ? <TooltipComponent {...customTooltip.props} /> : null}
+        />
         { normalizeToArray(xAxis).map((x) => <XAxis key={x} dataKey={x} />) }
         { normalizeToArray(yAxis).map((y) => <YAxis key={y} dataKey={y} />) }
+        { normalizeToArray(bars).map((bar, index) => (
+          <Bar key={bar} dataKey={bar} fill={colors[index] || defaultColors[index]} />
+        )) }
         { normalizeToArray(lines).map((line, index) => (
           <Line
             key={line}
@@ -36,17 +40,23 @@ export default function ChartLine({
             activeDot={{ r: 8 }}
           />
         )) }
-        <Tooltip
-          labelStyle={{ fontSize: 18 }}
-          content={TooltipComponent ? <TooltipComponent {...customTooltip.props} /> : null}
-        />
-        <Legend iconSize={10} iconType="circle" />
-      </LineChart>
+        <When condition={legend}>
+          <Legend iconSize={10} iconType="circle" />
+        </When>
+      </Chart>
     </ResponsiveContainer>
   );
 }
 
 ChartLine.propTypes = {
+  legend: PropTypes.bool,
+  Chart: PropTypes.oneOfType([
+    PropTypes.any,
+  ]),
+  bars: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
   customTooltip: PropTypes.shape({
     Component: PropTypes.any,
     props: PropTypes.any,
@@ -69,9 +79,12 @@ ChartLine.propTypes = {
 
 ChartLine.defaultProps = {
   customTooltip: null,
+  legend: false,
+  Chart: null,
   colors: [],
-  data: [],
   lines: [],
   xAxis: [],
   yAxis: [],
+  bars: [],
+  data: [],
 };

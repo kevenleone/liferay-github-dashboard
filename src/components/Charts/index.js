@@ -1,9 +1,7 @@
-import LineTooltip from './Line/Tooltip';
-import BarTooltip from './Bar/Tooltip';
-import LineChart from './Line';
-import BarChart from './Bar';
+import { BarTooltip, LineTooltip } from './Tooltip';
+import MainChart from './Main';
 import Text from './Text';
 
 export {
-  BarChart, LineChart, LineTooltip, BarTooltip, Text,
+  MainChart, LineTooltip, BarTooltip, Text,
 };
