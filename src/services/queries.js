@@ -11,8 +11,38 @@ const queries = {
           }
         }
       }
-    }
+    } 
   }`,
+  getRepository: ({ owner, repo: name }) => `
+  query {
+    repository(owner: "${owner}", name: "${name}") {
+      id
+      name
+      issues(first: 100, states: CLOSED) {
+        edges {
+          node {
+            createdAt
+            closedAt
+          }
+        }
+      }
+      pullRequests(first: 100, states: MERGED) {
+        edges {
+          node {
+            createdAt
+            closedAt
+            files(first: 100) {
+              nodes {
+                additions
+                deletions
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  `,
 };
 
 export default {

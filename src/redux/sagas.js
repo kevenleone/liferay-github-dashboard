@@ -1,8 +1,8 @@
 import { takeLatest } from 'redux-saga/effects';
 
-import { getPullRequests, getUserRepositories } from './actions/github';
+import { getUserRepository, getUserRepositories } from './actions/github';
 
 export default function* root() {
-  yield takeLatest('GET_PULL_REQUESTS_SAGA', getPullRequests);
   yield takeLatest('FETCH_USER_REPOS_SAGA', getUserRepositories);
+  yield takeLatest('FETCH_REPO_SAGA', getUserRepository);
 }

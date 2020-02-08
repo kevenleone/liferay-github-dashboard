@@ -19,7 +19,7 @@ const Header = () => {
 
   function handleClickRepository({ name }, clearValue = false) {
     setRepository(name);
-    dispatch({ type: 'SET_REPOSITORY_OWNER_REPO', payload: clearValue ? '' : name });
+    dispatch({ type: 'FETCH_REPO_SAGA', payload: clearValue ? '' : name });
   }
 
   function handleChange({ target: { name, value } }) {

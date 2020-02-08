@@ -1,5 +1,25 @@
 import constants from './constants';
 
+function timeConverter(ms) {
+  const days = Math.floor(ms / (24 * 60 * 60 * 1000));
+  const daysms = ms % (24 * 60 * 60 * 1000);
+  const hours = Math.floor((daysms) / (60 * 60 * 1000));
+  const hoursms = ms % (60 * 60 * 1000);
+  const minutes = Math.floor((hoursms) / (60 * 1000));
+  return `${days}days ${hours}h${minutes}`;
+}
+
+function getAverageTime(nodes = []) {
+  let average = { data: 'No content to show' };
+  const dates = nodes
+    .map(({ node: { createdAt, closedAt } }) => (new Date(closedAt) - new Date(createdAt)));
+  if (dates.length) {
+    average = { data: timeConverter(dates.reduce((a, b) => a + b) / nodes.length) };
+  }
+  return average;
+}
+
+
 function normalizeToArray(variable) {
   return typeof variable === 'string' ? [variable] : variable;
 }
@@ -21,4 +41,6 @@ function readProp(object, prop, defaultValue) {
   return defaultValue;
 }
 
-export { constants, normalizeToArray, readProp };
+export {
+  constants, normalizeToArray, timeConverter, readProp, getAverageTime,
+};

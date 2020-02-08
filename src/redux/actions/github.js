@@ -1,54 +1,10 @@
 import {
-  put, call,
+  put, call, select,
 } from 'redux-saga/effects';
 import GitGraphQL, { queries } from '../../services';
-import { readProp } from '../../utils';
+import { readProp, getAverageTime } from '../../utils';
 
-const { getUser, normalizeQuery } = queries;
-
-export function* getPullRequests() {
-  try {
-    // const { repository } = yield select((state) => state.github);
-    const response = {};
-
-
-    // const filesPromise = pullRequest.map(pr => github.pulls.listFiles({
-    //   owner: "kevenleone",
-    //   repo: "graphscript",
-    //   pull_number: pr.number
-    // }))
-
-    // const data = await Promise.all(filesPromise);
-
-
-    // const response = yield call(git.pulls.list, { ...repository });
-    // console.log(response);
-    // const filesApi = (id) => `/repos/${repo}/pulls/${id}/files`;
-    // const filesCall = response.data.map((pr) => call(api.get, filesApi(pr.number)));
-    // const responsePullsFiles = yield all(filesCall);
-    // const pullRequests = response.data.map((pr, index) => {
-    //   const { number, created_at, merged_at } = pr;
-    //   const files = responsePullsFiles[index].data;
-    //   const totalChanges = files.map((file) => file.changes).reduce((a, b) => a + b);
-    //   return {
-    //     number,
-    //     created_at,
-    //     merged_at,
-    //     changes: {
-    //       total: totalChanges,
-    //       size: totalChanges <= 100 ? 'Small' : (totalChanges <= 1000 ? 'Medium' : 'Large'),
-    //     },
-    //   };
-    // });
-    yield put({
-      type: 'SET_PULL_REQUESTS',
-      payload: { response },
-    });
-  } catch (e) {
-    console.log(e); //eslint-disable-line
-  }
-  yield true;
-}
+const { getUser, getRepository, normalizeQuery } = queries;
 
 export function* getUserRepositories(action) {
   const username = action.payload;
@@ -66,6 +22,26 @@ export function* getUserRepositories(action) {
   }
 }
 
-export function* getIssues() {
-  yield true;
+export function* getUserRepository(action) {
+  const repository = action.payload;
+  const { repository: { owner } } = yield select((state) => state.github);
+  yield put({ type: 'SET_REPOSITORY_OWNER_REPO', payload: repository });
+
+  if (repository) {
+    const query = normalizeQuery(getRepository, { owner, repo: repository });
+    try {
+      const graphResponse = yield call(GitGraphQL, query);
+      const issues = readProp(graphResponse, 'data.repository.issues.edges', []);
+      const pullRequests = readProp(graphResponse, 'data.repository.pullRequests.edges', []);
+      const averageIssues = getAverageTime(issues);
+      const averagePullRequests = getAverageTime(pullRequests);
+      yield put({
+        type: 'SET_AVERAGE_TIME',
+        payload:
+        { average_pull: averagePullRequests, average_issue: averageIssues },
+      });
+    } catch (e) {
+      console.log(e); //eslint-disable-line
+    }
+  }
 }

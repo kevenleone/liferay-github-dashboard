@@ -55,8 +55,8 @@ export default function (state = INITIAL_STATE, action) {
   switch (action.type) {
     case 'SET_AVERAGE_PULL':
       return { ...state, dashboard: { ...state.dashboard, average_pull: action.payload } };
-    case 'SET_AVERAGE_ISSUE':
-      return { ...state, dashboard: { ...state.dashboard, average_issue: action.payload } };
+    case 'SET_AVERAGE_TIME':
+      return { ...state, dashboard: { ...state.dashboard, ...action.payload } };
     case 'SET_AVERAGE_MERGE':
       return { ...state, dashboard: { ...state.dashboard, average_merge: action.payload } };
     case 'SET_MONTH_SUMARY':
