@@ -23,7 +23,9 @@ export default [
     },
     render: {
       props: {
+        legend: false,
         Chart: BarChart,
+        height: 450,
         customTooltip: {
           Component: BarTooltip,
           props: {
@@ -82,7 +84,7 @@ export default [
               },
               lines: ['Merged', 'Opened', 'Closed'],
               colors: ['#B20BFF', '#FF3A00', '#13C600'],
-              xAxis: 'name',
+              xAxis: 'date',
               yAxis: '',
             },
           },
@@ -100,7 +102,7 @@ export default [
               },
               lines: ['Opened', 'Closed'],
               colors: ['#FF3A00', '#13C600'],
-              xAxis: 'name',
+              xAxis: 'date',
               yAxis: '',
             },
           },

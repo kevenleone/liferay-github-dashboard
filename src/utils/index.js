@@ -65,9 +65,13 @@ function normalizePullRequestsMerge(pullRequests) {
     { name: 'Large', ...metrics },
   ];
 
-  const getFilesCount = (files) => files
-    .map(({ additions, deletions }) => additions + deletions)
-    .reduce((a, b) => a + b);
+  const getFilesCount = (files) => {
+    const fileMap = files.map(({ additions, deletions }) => additions + deletions);
+    if (fileMap && fileMap.length > 0) {
+      return fileMap.reduce((a, b) => a + b);
+    }
+    return 0;
+  };
 
   const files = pullRequests
     .map(({ node: { createdAt, closedAt, files: { nodes } } }) => {
@@ -79,16 +83,16 @@ function normalizePullRequestsMerge(pullRequests) {
   files.forEach(({ diffMergeTime, sizePR }) => {
     const options = { Small: 0, Medium: 1, Large: 2 };
     const index = options[sizePR];
-    averagePR[index]['Average Time'] += 1;
-    averagePR[index]['Pull Requests'] += diffMergeTime;
+    averagePR[index]['Average Time'] += diffMergeTime;
+    averagePR[index]['Pull Requests'] += 1;
   });
 
   const getHours = (ms) => Math.round((ms / (1000 * 60 * 60)));
 
   const averageMerge = averagePR.map((average) => {
     const content = { ...average };
-    if (average['Pull Requests']) {
-      content['Pull Requests'] = getHours(average['Pull Requests'] / average['Average Time']);
+    if (average['Average Time']) {
+      content['Average Time'] = getHours(average['Average Time'] / average['Pull Requests']);
     }
     return content;
   });

@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { When } from 'react-if';
 import {
   ResponsiveContainer, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
@@ -9,8 +8,17 @@ import { constants, normalizeToArray } from '../../../utils';
 
 const { chart: { colors: defaultColors } } = constants;
 
-export default function ChartLine({
-  Chart, legend, data, bars, colors, lines, xAxis, yAxis, customTooltip,
+export default function MainChart({
+  Chart,
+  legend,
+  data,
+  bars,
+  colors,
+  lines,
+  xAxis,
+  yAxis,
+  height,
+  customTooltip,
 }) {
   let TooltipComponent;
   if (customTooltip) {
@@ -18,7 +26,7 @@ export default function ChartLine({
   }
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
+    <ResponsiveContainer width="100%" height={height}>
       <Chart data={data}>
         <CartesianGrid strokeDasharray="1 0" />
         <Tooltip
@@ -40,15 +48,15 @@ export default function ChartLine({
             activeDot={{ r: 8 }}
           />
         )) }
-        <When condition={legend}>
-          <Legend iconSize={10} iconType="circle" />
-        </When>
+        { legend && <Legend iconSize={10} iconType="circle" />}
+
       </Chart>
     </ResponsiveContainer>
   );
 }
 
-ChartLine.propTypes = {
+MainChart.propTypes = {
+  height: PropTypes.number,
   legend: PropTypes.bool,
   Chart: PropTypes.oneOfType([
     PropTypes.any,
@@ -77,9 +85,10 @@ ChartLine.propTypes = {
   ]),
 };
 
-ChartLine.defaultProps = {
+MainChart.defaultProps = {
   customTooltip: null,
-  legend: false,
+  legend: true,
+  height: 300,
   Chart: null,
   colors: [],
   lines: [],

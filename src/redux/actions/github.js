@@ -1,14 +1,63 @@
 import {
   put, call, select, all,
 } from 'redux-saga/effects';
+import {
+  isWithinInterval, addDays, subWeeks, format,
+} from 'date-fns';
 import GitGraphQL, { queries } from '../../services';
 import {
   readProp, getAverageTime, normalizePullRequestsMerge,
 } from '../../utils';
 
 const {
-  getUser, getRepository, getPullRequestFiles, normalizeQuery,
+  getUser, getRepository, getPullRequestFiles, searchPullRequests, normalizeQuery,
 } = queries;
+
+function groupBy(groups, by) {
+  const dict = {};
+  groups.forEach((group) => {
+    if (dict[group[by]]) {
+      dict[group[by]] = [...dict[group[by]], group];
+    } else {
+      dict[group[by]] = [group];
+    }
+  });
+  return dict;
+}
+
+function getCountDateBetween(array = [], date, key) {
+  return array.filter((d) => {
+    const compareDate = d[key];
+    const between = isWithinInterval(new Date(compareDate), { start: date, end: addDays(date, 7) });
+    return between;
+  }).length;
+}
+
+function* getPullRequestsSummary({ owner, repository }) {
+  const [lastMonth] = new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().split('T');
+  const query = normalizeQuery(searchPullRequests, { repo: `${owner}/${repository}`, date: lastMonth });
+  try {
+    const graphResponse = yield call(GitGraphQL, query);
+    const edges = readProp(graphResponse, 'data.search.edges', []);
+    const pullRequests = edges.map((edge) => edge.node);
+    const pullRequestGrouped = groupBy(pullRequests, 'state');
+    const pullRequestSummary = [0, 1, 2, 3, 4].map((weeks) => {
+      const date = subWeeks(new Date(), weeks);
+      const data = {
+        Merged: getCountDateBetween(pullRequestGrouped.MERGED, date, 'mergedAt'),
+        Opened: getCountDateBetween(pullRequestGrouped.OPENED, date, 'createdAt'),
+        Closed: getCountDateBetween(pullRequestGrouped.CLOSED, date, 'closedAt'),
+      };
+      return { date: format(date, 'dd MMM'), ...data };
+    }).reverse();
+    yield put({
+      type: 'SET_MONTH_SUMARY_ISSUES',
+      payload: pullRequestSummary,
+    });
+  } catch (e) {
+    console.log(e); //eslint-disable-line
+  }
+}
 
 function* getAverages({ owner, repository }) {
   const query = normalizeQuery(getRepository, { owner, repo: repository });
@@ -27,7 +76,6 @@ function* getAverages({ owner, repository }) {
     console.log(e); //eslint-disable-line
   }
 }
-
 
 function* getAverageMergePR({ owner, repository }) {
   const query = normalizeQuery(getPullRequestFiles, { owner, repo: repository });
@@ -73,6 +121,7 @@ export function* getUserRepository(action) {
       const pipeline = [
         call(getAverages, params),
         call(getAverageMergePR, params),
+        call(getPullRequestsSummary, params),
       ];
       yield all(pipeline);
     } catch (e) {

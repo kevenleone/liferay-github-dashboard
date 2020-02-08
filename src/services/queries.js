@@ -18,7 +18,7 @@ const queries = {
     repository(owner: "${owner}", name: "${name}") {
       id
       name
-      issues(first: 100, states: CLOSED) {
+      issues(first: 100, states: CLOSED, orderBy: {field: CREATED_AT, direction: DESC}) {
         edges {
           node {
             createdAt
@@ -26,7 +26,7 @@ const queries = {
           }
         }
       }
-      pullRequests(first: 100, states: MERGED) {
+      pullRequests(first: 100, states: MERGED, orderBy: {field: CREATED_AT, direction: DESC}) {
         edges {
           node {
             createdAt
@@ -40,7 +40,7 @@ const queries = {
   getPullRequestFiles: ({ owner, repo: name }) => `
   query {
     repository(owner: "${owner}", name: "${name}") {
-      pullRequests(first: 100, states: MERGED) {
+      pullRequests(first: 100, states: MERGED, orderBy: {field: CREATED_AT, direction: DESC}) {
         edges {
           node {
             createdAt
@@ -51,6 +51,26 @@ const queries = {
                 deletions
               }
             }
+          }
+        }
+      }
+    }
+  }
+  `,
+  searchPullRequests: ({ repo, date }) => `
+  query {
+    search (
+      query: "repo:${repo} is:pr created:>${date}", 
+      type: ISSUE, 
+      last: 100
+    ) {
+      edges {
+        node {
+          ... on PullRequest {
+            state
+            createdAt
+            mergedAt
+            closedAt
           }
         }
       }
@@ -70,3 +90,24 @@ export default {
     };
   },
 };
+
+// query {
+//   repository(owner: "react-hook-form", name: "react-hook-form-website") {
+//     id
+//     name
+//     description
+//     pullRequests(
+//       first: 100,
+//       orderBy: { field: CREATED_AT, direction: DESC }
+//     ) {
+//       edges {
+//         node {
+//           state
+//           createdAt
+//           closedAt
+//           mergedAt
+//         }
+//       }
+//     }
+//   }
+// }
