@@ -84,6 +84,11 @@ export function* getUserRepositories(action) {
   let nextPageEdges = [];
   try {
     const graphResponse = yield call(GitGraphQL, query);
+    const repositoryOwner = readProp(graphResponse, 'data.repositoryOwner');
+    if (!repositoryOwner) {
+      throw new Error('User not found');
+    }
+
     const pageInfo = readProp(graphResponse, 'data.repositoryOwner.repositories.pageInfo', { hasNextPage: false });
     if (pageInfo.hasNextPage) {
       const queryCursor = normalizeQuery(getUser, { username, after: `after: "${pageInfo.endCursor}"` });
