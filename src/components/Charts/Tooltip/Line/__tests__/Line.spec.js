@@ -25,9 +25,10 @@ describe('Line', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  test.skip('should render null', () => {
+  test('should render null', () => {
     const props = {
       active: false,
+      title: 'Pull Requests',
     };
     const wrapper = shallow(<Line {...props} />);
     expect(wrapper.equals(null)).toBeTruthy();

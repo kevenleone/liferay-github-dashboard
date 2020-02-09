@@ -1,30 +1,6 @@
-const dashboard = {
-  average_merge: {
-    data: [
-      { name: 'Small', 'Average Time': 0, 'Pull Requests': 0 },
-      { name: 'Medium', 'Average Time': 0, 'Pull Requests': 0 },
-      { name: 'Large', 'Average Time': 0, 'Pull Requests': 0 },
-    ],
-  },
-  average_pull: {
-    data: '',
-  },
-  average_issue: {
-    data: '',
-  },
-  month_summary: {
-    data: {
-      issues: {
-        total: 0,
-        data: [],
-      },
-      pull_requests: {
-        total: 0,
-        data: [],
-      },
-    },
-  },
-};
+import { constants } from '../../utils';
+
+const { dashboard } = constants;
 
 const INITIAL_STATE = {
   repository: { owner: '', repo: '', formError: false },

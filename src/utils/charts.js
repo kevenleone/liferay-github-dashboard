@@ -3,6 +3,11 @@ import {
   MainChart, LineTooltip, BarTooltip, Text,
 } from '../components/Charts';
 import Tabs from '../components/Tabs';
+import { constants } from './index';
+
+const {
+  AVERAGE_MERGE, AVERAGE_ISSUE, AVERAGE_PULL, MONTH_SUMARY,
+} = constants;
 /**
  * File with Charts config, for dynamic rendering
  * key: The name of key inside dashboard (on redux state, check the file redux/reducers/github.js)
@@ -17,7 +22,7 @@ import Tabs from '../components/Tabs';
 export default [
   {
     key: 'average_merge',
-    title: 'Average Merge Time by Pull Request Size',
+    title: AVERAGE_MERGE,
     cols: {
       xs: 12,
     },
@@ -52,7 +57,7 @@ export default [
   },
   {
     key: 'average_pull',
-    title: 'Average Pull Request Merge Time',
+    title: AVERAGE_PULL,
     cols: {
       xs: 12,
       xl: 6,
@@ -64,7 +69,7 @@ export default [
   },
   {
     key: 'average_issue',
-    title: 'Average Issue Close Time',
+    title: AVERAGE_ISSUE,
     cols: {
       xs: 12,
       xl: 6,
@@ -76,7 +81,7 @@ export default [
   },
   {
     key: 'month_summary',
-    title: 'Month Summary',
+    title: MONTH_SUMARY,
     render: {
       Component: Tabs,
       props: {

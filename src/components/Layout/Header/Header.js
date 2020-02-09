@@ -11,6 +11,7 @@ let inputTimeOut = 0;
 const Header = () => {
   const { repositories, repository: { repo, formError } } = useSelector((state) => state.github);
   const [repository, setRepository] = useState(repo);
+  const [username, setUsername] = useState('');
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -28,6 +29,7 @@ const Header = () => {
     if (name === 'repository') {
       handleClickRepository({ name: value }, true);
     } else {
+      setUsername(value);
       // note: This setTimeOut is used to prevent many requests while user is typing
       if (inputTimeOut) clearTimeout(inputTimeOut);
       inputTimeOut = setTimeout(() => {
@@ -45,6 +47,7 @@ const Header = () => {
           <Col xs={9} xl={4}>
             <InputGroup>
               <Input
+                value={username}
                 invalid={formError}
                 onChange={handleChange}
                 className="custom-input"
