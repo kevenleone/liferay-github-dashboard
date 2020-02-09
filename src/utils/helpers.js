@@ -103,13 +103,13 @@ function readProp(object, prop, defaultValue) {
   let ret = typeof object === 'object' && object !== null ? object : { };
   /**/
   if (props.length) {
-    props.forEach((p, i) => {
-      if (ret[p] === undefined || (i < (props.length - 1) && ret[p] === null)) {
+    for (let i = 0; i < (props.length); i++) { //eslint-disable-line
+      if (ret[props[i]] === undefined || (i < (props.length - 1) && ret[props[i]] === null)) {
         return defaultValue;
       }
-      ret = ret[p];
-      return null;
-    });
+      ret = ret[props[i]];
+    }
+    /**/
     return ret;
   }
   return defaultValue;
