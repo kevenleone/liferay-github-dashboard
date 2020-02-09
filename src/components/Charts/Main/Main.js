@@ -4,10 +4,11 @@ import {
   ResponsiveContainer, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 
-import { constants, normalizeToArray } from '../../../utils';
+import { constants, helpers } from '../../../utils';
 
 import './Main.scss';
 
+const { normalizeToArray } = helpers;
 const { chart: { colors: defaultColors } } = constants;
 
 export default function MainChart({

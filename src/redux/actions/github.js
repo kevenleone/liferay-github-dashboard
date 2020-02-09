@@ -3,14 +3,16 @@ import {
 } from 'redux-saga/effects';
 
 import GitGraphQL, { queries } from '../../services';
-import {
+import { helpers } from '../../utils';
+
+const {
   normalizePullRequestsMerge,
   normalizeSummary,
   getAverageTime,
   lastMonth,
   readProp,
   groupBy,
-} from '../../utils';
+} = helpers;
 
 const {
   getUser, getRepository, getPullRequestFiles, search, normalizeQuery,
