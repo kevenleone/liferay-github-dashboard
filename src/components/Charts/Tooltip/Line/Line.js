@@ -11,7 +11,7 @@ export default function LineTooltip({ title, active, payload }) {
         </div>
         <hr />
         <ul className="line">
-          { payload.map(({ name, color, value }) => (
+          { payload && payload.map(({ name, color, value }) => (
             <table key={name}>
               <tbody>
                 <tr>

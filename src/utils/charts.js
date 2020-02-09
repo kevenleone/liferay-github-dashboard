@@ -25,7 +25,7 @@ export default [
       props: {
         legend: false,
         Chart: BarChart,
-        height: 200,
+        height: 400,
         cartesianProps: {
           vertical: false,
         },

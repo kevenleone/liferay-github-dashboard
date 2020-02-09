@@ -1,4 +1,36 @@
+import {
+  isWithinInterval, subWeeks, subDays, format,
+} from 'date-fns';
 import constants from './constants';
+
+function getCountDateBetween({
+  array = [], start, end, key,
+}) {
+  return array.filter((d) => {
+    const compareDate = d[key];
+    const between = isWithinInterval(new Date(compareDate), { end, start });
+    return between;
+  }).length;
+}
+
+function normalizeSummary(group, containsMerged) {
+  return [4, 3, 2, 1, 0].map((weeks, index) => {
+    const end = subWeeks(new Date().setHours(23, 59, 59), weeks);
+    const start = index !== 0 ? subDays(new Date(end).setHours(0, 0, 0), 6)
+      : new Date(new Date(end).setHours(0, 0, 0));
+    const date = subWeeks(new Date().setHours(0, 0, 0, 0), weeks);
+    const params = { start, end };
+    const data = {
+      Opened: getCountDateBetween({ ...params, array: group.OPEN, key: 'createdAt' }),
+      Closed: getCountDateBetween({ ...params, array: group.CLOSED, key: 'closedAt' }),
+    };
+    if (containsMerged) {
+      data.Merged = getCountDateBetween({ ...params, array: group.MERGED, key: 'mergedAt' });
+    }
+    return { date: format(date, 'dd MMM'), ...data };
+  });
+}
+
 
 function getPullRequestSize(total = 0) {
   let a = 'Large';
@@ -112,12 +144,16 @@ function normalizePullRequestsMerge(pullRequests) {
   return averageMerge;
 }
 
+const lastMonth = format(subWeeks(new Date(), 4), 'yyyy-MM-dd');
+
 export {
   groupBy,
   constants,
   readProp,
+  lastMonth,
   getAverage,
   getAverageTime,
+  normalizeSummary,
   normalizeToArray,
   normalizePullRequestsMerge,
 };

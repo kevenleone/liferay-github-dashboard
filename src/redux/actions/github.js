@@ -1,87 +1,45 @@
 import {
   put, call, select, all,
 } from 'redux-saga/effects';
-import {
-  isWithinInterval, subDays, subWeeks, format,
-} from 'date-fns';
+
 import GitGraphQL, { queries } from '../../services';
 import {
-  readProp, getAverageTime, groupBy, normalizePullRequestsMerge,
+  normalizePullRequestsMerge,
+  normalizeSummary,
+  getAverageTime,
+  lastMonth,
+  readProp,
+  groupBy,
 } from '../../utils';
 
 const {
   getUser, getRepository, getPullRequestFiles, search, normalizeQuery,
 } = queries;
-const lastMonth = format(subWeeks(new Date(), 4), 'yyyy-MM-dd');
 
-function getCountDateBetween({
-  array = [], start, end, key,
-}) {
-  return array.filter((d) => {
-    const compareDate = d[key];
-    const between = isWithinInterval(new Date(compareDate), { end, start });
-    return between;
-  }).length;
-}
-
-function* getPullRequestsSummary({ owner, repository }) {
-  const query = normalizeQuery(search, { repo: `${owner}/${repository}`, date: lastMonth, type: 'pr' });
+function* fetchSummary({ owner, repository }, type) {
+  const query = normalizeQuery(search, { repo: `${owner}/${repository}`, date: lastMonth, type });
   try {
     const graphResponse = yield call(GitGraphQL, query);
     const edges = readProp(graphResponse, 'data.search.edges', []);
-    const pullRequests = edges.map((edge) => edge.node);
-    const pullRequestGrouped = groupBy(pullRequests, 'state');
-    // console.log(pullRequestGrouped);
-    const pullRequestSummary = [4, 3, 2, 1, 0].map((weeks, index) => {
-      const end = subWeeks(new Date().setHours(23, 59, 59), weeks);
-      const start = index !== 0 ? subDays(new Date(end).setHours(0, 0, 0), 6)
-        : new Date(new Date(end).setHours(0, 0, 0));
-      const date = subWeeks(new Date().setHours(0, 0, 0, 0), weeks);
-      const params = { start, end };
-      // const params = { start: subDays(date, 7), end: date };
-      // console.log(index, start, end, { start: subDays(date, 7), end: date });
-      const data = {
-        Merged: getCountDateBetween({ ...params, array: pullRequestGrouped.MERGED, key: 'mergedAt' }),
-        Opened: getCountDateBetween({ ...params, array: pullRequestGrouped.OPEN, key: 'createdAt' }),
-        Closed: getCountDateBetween({ ...params, array: pullRequestGrouped.CLOSED, key: 'closedAt' }),
-      };
-      return { date: format(date, 'dd MMM'), ...data };
-    });
-    yield put({
-      type: 'SET_MONTH_SUMARY_PULL_REQUESTS',
-      payload: { data: pullRequestSummary, total: pullRequests.length },
-    });
+    const nodes = edges.map((edge) => edge.node);
+    const nodesGroup = groupBy(nodes, 'state');
+    return { data: normalizeSummary(nodesGroup, type === 'pr'), total: nodes.length };
   } catch (e) {
     console.log(e); //eslint-disable-line
+    return { data: [], total: 0 };
   }
 }
 
-function* getIssueSummary({ owner, repository }) {
-  const query = normalizeQuery(search, { repo: `${owner}/${repository}`, date: lastMonth, type: 'issue' });
-  try {
-    const graphResponse = yield call(GitGraphQL, query);
-    const edges = readProp(graphResponse, 'data.search.edges', []);
-    const issues = edges.map((edge) => edge.node);
-    const issuesGrouped = groupBy(issues, 'state');
-    const issuesSummary = [4, 3, 2, 1, 0].map((weeks, index) => {
-      const date = subWeeks(new Date().setHours(0, 0, 0, 0), weeks);
-      const end = subWeeks(new Date().setHours(23, 59, 59), weeks);
-      const start = index !== 0 ? subDays(new Date(end).setHours(0, 0, 0), 6)
-        : new Date(new Date(end).setHours(0, 0, 0));
-      const params = { start, end };
-      const data = {
-        Opened: getCountDateBetween({ ...params, array: issuesGrouped.OPEN, key: 'createdAt' }),
-        Closed: getCountDateBetween({ ...params, array: issuesGrouped.CLOSED, key: 'closedAt' }),
-      };
-      return { date: format(date, 'dd MMM'), ...data };
-    });
-    yield put({
-      type: 'SET_MONTH_SUMARY_ISSUES',
-      payload: { data: issuesSummary, total: issues.length },
-    });
-  } catch (e) {
-    console.log(e); //eslint-disable-line
-  }
+function* getSummary(repository) {
+  const pipeline = [
+    call(fetchSummary, repository, 'pr'),
+    call(fetchSummary, repository, 'issue'),
+  ];
+  const [pull_requests, issues] = yield all(pipeline); //eslint-disable-line
+  yield put({
+    type: 'SET_MONTH_SUMARY',
+    payload: { data: { issues, pull_requests } },
+  });
 }
 
 function* getAverages({ owner, repository }) {
@@ -118,7 +76,6 @@ function* getAverageMergePR({ owner, repository }) {
   }
 }
 
-
 export function* getUserRepositories(action) {
   const username = action.payload;
   const query = normalizeQuery(getUser, { username });
@@ -135,23 +92,25 @@ export function* getUserRepositories(action) {
   }
 }
 
-export function* getUserRepository(action) {
-  const repository = action.payload;
-  const { repository: { owner } } = yield select((state) => state.github);
-  yield put({ type: 'SET_REPOSITORY_OWNER_REPO', payload: repository });
-
-  if (repository) {
-    const params = { owner, repository };
+function* getInsights(params) {
+  if (params.repository) {
     try {
       const pipeline = [
         call(getAverages, params),
         call(getAverageMergePR, params),
-        call(getPullRequestsSummary, params),
-        call(getIssueSummary, params),
+        call(getSummary, params),
       ];
       yield all(pipeline);
     } catch (e) {
       console.log(e); //eslint-disable-line
     }
   }
+}
+
+export function* getUserRepository(action) {
+  const { repository: { owner } } = yield select((state) => state.github);
+  const repository = action.payload;
+  const params = { owner, repository };
+  yield put({ type: 'SET_REPOSITORY_OWNER_REPO', payload: repository });
+  yield call(getInsights, params);
 }
