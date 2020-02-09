@@ -10,20 +10,18 @@ export default function BarTooltip({ transformValue, active, payload }) {
       .sort((a, b) => b - a);
     return (
       <div className="BarTooltip">
-        <ul className="line">
-          { keys.map((key) => (
-            <table key={key}>
-              <tbody>
-                <tr>
-                  <td width="150px">
-                    <span>{key}</span>
-                  </td>
-                  <td style={{ marginRight: 10 }}>{transformValue(key, payloadBar[key])}</td>
-                </tr>
-              </tbody>
-            </table>
-          )) }
-        </ul>
+        { keys.map((key) => (
+          <table key={key}>
+            <tbody>
+              <tr>
+                <td width="150px">
+                  <span>{key}</span>
+                </td>
+                <td style={{ marginRight: 10 }}>{transformValue(key, payloadBar[key])}</td>
+              </tr>
+            </tbody>
+          </table>
+        )) }
       </div>
     );
   }
