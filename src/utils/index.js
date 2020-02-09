@@ -1,7 +1,9 @@
 import {
-  isWithinInterval, subWeeks, subDays, format,
+  isWithinInterval, subWeeks, format,
 } from 'date-fns';
 import constants from './constants';
+
+const lastMonthDate = subWeeks(new Date(), 4);
 
 function getCountDateBetween({
   array = [], start, end, key,
@@ -13,12 +15,26 @@ function getCountDateBetween({
   }).length;
 }
 
+function addDays(dateStart, days) {
+  const futureDay = new Date(dateStart);
+  futureDay.setDate(futureDay.getDate() + days);
+  return futureDay.getTime();
+}
+export function getDatesBetween(startDate, stopDate) {
+  const dateArray = [];
+  let currentDate = startDate;
+  while (currentDate <= stopDate) {
+    dateArray.push(new Date(currentDate));
+    currentDate = addDays(currentDate, 1);
+  }
+  return dateArray;
+}
+
 function normalizeSummary(group, containsMerged) {
-  return [4, 3, 2, 1, 0].map((weeks, index) => {
-    const end = subWeeks(new Date().setHours(23, 59, 59), weeks);
-    const start = index !== 0 ? subDays(new Date(end).setHours(0, 0, 0), 6)
-      : new Date(new Date(end).setHours(0, 0, 0));
-    const date = subWeeks(new Date().setHours(0, 0, 0, 0), weeks);
+  const datesInMonth = getDatesBetween(lastMonthDate, new Date());
+  return datesInMonth.map((day) => {
+    const end = new Date(new Date(day).setHours(23, 59, 59));
+    const start = new Date(new Date(day).setHours(0, 0, 0));
     const params = { start, end };
     const data = {
       Opened: getCountDateBetween({ ...params, array: group.OPEN, key: 'createdAt' }),
@@ -27,10 +43,9 @@ function normalizeSummary(group, containsMerged) {
     if (containsMerged) {
       data.Merged = getCountDateBetween({ ...params, array: group.MERGED, key: 'mergedAt' });
     }
-    return { date: format(date, 'dd MMM'), ...data };
+    return { date: format(start, 'dd MMM'), ...data };
   });
 }
-
 
 function getPullRequestSize(total = 0) {
   let a = 'Large';
@@ -71,12 +86,12 @@ function getAverage(nodes) {
   return 0;
 }
 
-function getAverageTime(nodes = []) {
+function getAverageTime(nodes = [], type) {
   const average = getAverage(nodes);
   if (average) {
     return { data: timeConverter(average).text };
   }
-  return { data: 'No content to show' };
+  return { data: `${type} not found` };
 }
 
 
@@ -89,13 +104,13 @@ function readProp(object, prop, defaultValue) {
   let ret = typeof object === 'object' && object !== null ? object : { };
   /**/
   if (props.length) {
-    for (let i = 0; i < props.length; i++) { //eslint-disable-line
-      if (ret[props[i]] === undefined || (i < (props.length - 1) && ret[props[i]] === null)) {
+    props.forEach((p, i) => {
+      if (ret[p] === undefined || (i < (props.length - 1) && ret[p] === null)) {
         return defaultValue;
       }
-      ret = ret[props[i]];
-    }
-    /**/
+      ret = ret[p];
+      return null;
+    });
     return ret;
   }
   return defaultValue;
@@ -144,7 +159,7 @@ function normalizePullRequestsMerge(pullRequests) {
   return averageMerge;
 }
 
-const lastMonth = format(subWeeks(new Date(), 4), 'yyyy-MM-dd');
+const lastMonth = format(lastMonthDate, 'yyyy-MM-dd');
 
 export {
   groupBy,

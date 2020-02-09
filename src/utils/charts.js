@@ -22,6 +22,7 @@ export default [
       xs: 12,
     },
     render: {
+      Component: MainChart,
       props: {
         legend: false,
         Chart: BarChart,
@@ -36,10 +37,17 @@ export default [
           },
         },
         bars: ['Average Time'],
-        xAxis: 'name',
-        yAxis: 'Average Time',
+        xAxis: {
+          data: 'name',
+          props: {},
+        },
+        yAxis: {
+          data: 'Average Time',
+          props: {
+            unit: 'h',
+          },
+        },
       },
-      Component: MainChart,
     },
   },
   {
@@ -50,8 +58,8 @@ export default [
       xl: 6,
     },
     render: {
-      props: {},
       Component: Text,
+      props: {},
     },
   },
   {
@@ -62,8 +70,8 @@ export default [
       xl: 6,
     },
     render: {
-      props: {},
       Component: Text,
+      props: {},
     },
   },
   {
@@ -89,8 +97,16 @@ export default [
               },
               lines: ['Merged', 'Opened', 'Closed'],
               colors: ['#B20BFF', '#FF3A00', '#13C600'],
-              xAxis: 'date',
-              yAxis: '',
+              xAxis: {
+                data: 'date',
+                props: {
+                  interval: 2.5,
+                  padding: { right: 20 },
+                },
+              },
+              yAxis: {
+                data: '',
+              },
             },
           },
           {
@@ -109,8 +125,16 @@ export default [
               },
               lines: ['Opened', 'Closed'],
               colors: ['#FF3A00', '#13C600'],
-              xAxis: 'date',
-              yAxis: '',
+              xAxis: {
+                data: 'date',
+                props: {
+                  interval: 2.5,
+                  padding: { right: 20 },
+                },
+              },
+              yAxis: {
+                data: '',
+              },
             },
           },
         ],

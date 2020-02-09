@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import ClayAutocomplete from '@clayui/autocomplete';
 import ClayDropDown from '@clayui/drop-down';
+import ClayAutocomplete from '@clayui/autocomplete';
 
 export default function AutoComplete({
   name, data, value, onChange, itemSelected, onClickItem,
 }) {
   const [resource, setResource] = useState(data);
-  const loading = true;
 
   useEffect(() => {
     setResource(data.filter((repo) => repo.name.toLowerCase().includes(value.toLowerCase())));
@@ -42,7 +41,6 @@ export default function AutoComplete({
             ))}
         </ClayDropDown.ItemList>
       </ClayAutocomplete.DropDown>
-      {loading && <ClayAutocomplete.LoadingIndicator />}
     </ClayAutocomplete>
   );
 }

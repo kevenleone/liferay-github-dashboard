@@ -36,8 +36,8 @@ export default function MainChart({
           labelStyle={{ fontSize: 18 }}
           content={TooltipComponent ? <TooltipComponent {...customTooltip.props} /> : null}
         />
-        { normalizeToArray(xAxis).map((x) => <XAxis key={x} dataKey={x} />) }
-        { normalizeToArray(yAxis).map((y) => <YAxis key={y} dataKey={y} />) }
+        { normalizeToArray(xAxis.data).map((x) => <XAxis {...xAxis.props} key={x} dataKey={x} />) }
+        { normalizeToArray(yAxis.data).map((y) => <YAxis {...yAxis.props} key={y} dataKey={y} />) }
         { normalizeToArray(bars).map((bar, index) => (
           <Bar key={bar} dataKey={bar} fill={colors[index] || defaultColors[index]} />
         )) }
@@ -81,14 +81,20 @@ MainChart.propTypes = {
     PropTypes.string,
     PropTypes.arrayOf(PropTypes.string),
   ]),
-  xAxis: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.arrayOf(PropTypes.string),
-  ]),
-  yAxis: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.arrayOf(PropTypes.string),
-  ]),
+  xAxis: PropTypes.shape({
+    data: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.array,
+    ]),
+    props: PropTypes.any,
+  }),
+  yAxis: PropTypes.shape({
+    data: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.array,
+    ]),
+    props: PropTypes.any,
+  }),
 };
 
 MainChart.defaultProps = {
@@ -98,8 +104,12 @@ MainChart.defaultProps = {
   height: 300,
   colors: [],
   lines: [],
-  xAxis: [],
-  yAxis: [],
+  xAxis: {
+    data: [],
+  },
+  yAxis: {
+    data: [],
+  },
   bars: [],
   data: [],
 };

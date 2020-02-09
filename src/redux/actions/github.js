@@ -48,8 +48,8 @@ function* getAverages({ owner, repository }) {
     const graphResponse = yield call(GitGraphQL, query);
     const issues = readProp(graphResponse, 'data.repository.issues.edges', []);
     const pullRequests = readProp(graphResponse, 'data.repository.pullRequests.edges', []);
-    const averageIssues = getAverageTime(issues);
-    const averagePullRequests = getAverageTime(pullRequests);
+    const averageIssues = getAverageTime(issues, 'Issues');
+    const averagePullRequests = getAverageTime(pullRequests, 'Pull Req');
     yield put({
       type: 'SET_AVERAGE_TIME',
       payload:
@@ -79,21 +79,34 @@ function* getAverageMergePR({ owner, repository }) {
 export function* getUserRepositories(action) {
   const username = action.payload;
   const query = normalizeQuery(getUser, { username });
+  let nextPageEdges = [];
   try {
     const graphResponse = yield call(GitGraphQL, query);
+    const pageInfo = readProp(graphResponse, 'data.repositoryOwner.repositories.pageInfo', { hasNextPage: false });
+    if (pageInfo.hasNextPage) {
+      const queryCursor = normalizeQuery(getUser, { username, after: `after: "${pageInfo.endCursor}"` });
+      const newPageResponse = yield call(GitGraphQL, queryCursor);
+      nextPageEdges = readProp(newPageResponse, 'data.repositoryOwner.repositories.edges', []);
+    }
     const edges = readProp(graphResponse, 'data.repositoryOwner.repositories.edges', []);
-    const repositories = edges.map(({ node: { id, name } }) => ({ id, name }));
+    const edgesUnion = [...edges, ...nextPageEdges];
+    const repositories = edgesUnion.map(({ node: { id, name } }) => ({ id, name }));
     yield put({
       type: 'SET_REPOSITORY_OWNER',
-      payload: { repositories, repository: { owner: username, repo: '' } },
+      payload: { repositories, repository: { owner: username, repo: '', formError: false } },
     });
   } catch (e) {
-    console.log(e); //eslint-disable-line
+    yield put({
+      type: 'SET_REPOSITORY_OWNER',
+      payload: { repositories: [], repository: { formError: true } },
+    });
   }
 }
 
 function* getInsights(params) {
   if (params.repository) {
+    yield put({ type: 'SET_DEFAULT_DASHBOARD' });
+
     try {
       const pipeline = [
         call(getAverages, params),

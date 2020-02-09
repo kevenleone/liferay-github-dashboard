@@ -1,9 +1,13 @@
 const queries = {
-  getUser: ({ username }) => `
+  getUser: ({ username, after = '' }) => `
     query {
       repositoryOwner(login:"${username}") {
       login
-      repositories(first: 100, orderBy: { field: NAME, direction: ASC }) {
+      repositories(first: 100, ${after} orderBy: { field: NAME, direction: ASC }) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
         edges {
           node {
             id
@@ -109,24 +113,3 @@ export default {
     };
   },
 };
-
-// query {
-//   repository(owner: "react-hook-form", name: "react-hook-form-website") {
-//     id
-//     name
-//     description
-//     pullRequests(
-//       first: 100,
-//       orderBy: { field: CREATED_AT, direction: DESC }
-//     ) {
-//       edges {
-//         node {
-//           state
-//           createdAt
-//           closedAt
-//           mergedAt
-//         }
-//       }
-//     }
-//   }
-// }

@@ -1,36 +1,35 @@
-const INITIAL_STATE = {
-  repository: {
-    owner: '',
-    repo: '',
+const dashboard = {
+  average_merge: {
+    data: [
+      { name: 'Small', 'Average Time': 0, 'Pull Requests': 0 },
+      { name: 'Medium', 'Average Time': 0, 'Pull Requests': 0 },
+      { name: 'Large', 'Average Time': 0, 'Pull Requests': 0 },
+    ],
   },
-  repositories: [],
-  dashboard: {
-    average_merge: {
-      data: [
-        { name: 'Small', 'Average Time': 0, 'Pull Requests': 0 },
-        { name: 'Medium', 'Average Time': 0, 'Pull Requests': 0 },
-        { name: 'Large', 'Average Time': 0, 'Pull Requests': 0 },
-      ],
-    },
-    average_pull: {
-      data: '',
-    },
-    average_issue: {
-      data: '',
-    },
-    month_summary: {
-      data: {
-        issues: {
-          total: 0,
-          data: [],
-        },
-        pull_requests: {
-          total: 0,
-          data: [],
-        },
+  average_pull: {
+    data: '',
+  },
+  average_issue: {
+    data: '',
+  },
+  month_summary: {
+    data: {
+      issues: {
+        total: 0,
+        data: [],
+      },
+      pull_requests: {
+        total: 0,
+        data: [],
       },
     },
   },
+};
+
+const INITIAL_STATE = {
+  repository: { owner: '', repo: '', formError: false },
+  repositories: [],
+  dashboard,
 };
 
 export default function (state = INITIAL_STATE, action) {
@@ -45,6 +44,8 @@ export default function (state = INITIAL_STATE, action) {
       return { ...state, ...action.payload };
     case 'SET_REPOSITORY_OWNER_REPO':
       return { ...state, repository: { ...state.repository, repo: action.payload } };
+    case 'SET_DEFAULT_DASHBOARD':
+      return { ...state, dashboard };
     default:
       return { ...state };
   }

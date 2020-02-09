@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { InputGroup, Input } from 'reactstrap';
+import {
+  InputGroup, Input, Row, Col,
+} from 'reactstrap';
 import AutoComplete from '../../AutoComplete';
 import './Header.scss';
 
 let inputTimeOut = 0;
 
 const Header = () => {
-  const { repositories, repository: { repo } } = useSelector((state) => state.github);
+  const { repositories, repository: { repo, formError } } = useSelector((state) => state.github);
   const [repository, setRepository] = useState(repo);
   const dispatch = useDispatch();
 
@@ -26,27 +28,32 @@ const Header = () => {
     if (name === 'repository') {
       handleClickRepository({ name: value }, true);
     } else {
-      // obs: This setTimeOut is used to prevent many requests while user is typing
+      // note: This setTimeOut is used to prevent many requests while user is typing
       if (inputTimeOut) clearTimeout(inputTimeOut);
       inputTimeOut = setTimeout(() => {
         if (value && value.length >= 2) {
           dispatch({ type: 'FETCH_USER_REPOS_SAGA', payload: value });
         }
-      }, 500);
+      }, 400);
     }
   }
 
   return (
     <div className="Header">
       <div className="heading">
-        <InputGroup>
-          <Input
-            onChange={handleChange}
-            className="custom-input"
-            placeholder="Liferay"
-            name="username"
-          />
-        </InputGroup>
+        <Row>
+          <Col xs={9} xl={4}>
+            <InputGroup>
+              <Input
+                invalid={formError}
+                onChange={handleChange}
+                className="custom-input"
+                placeholder="Liferay"
+                name="username"
+              />
+            </InputGroup>
+          </Col>
+        </Row>
         <AutoComplete
           onClickItem={handleClickRepository}
           onChange={handleChange}
