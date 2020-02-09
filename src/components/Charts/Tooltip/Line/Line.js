@@ -10,19 +10,19 @@ export default function LineTooltip({ title, active, payload }) {
           <span>{title}</span>
         </div>
         <hr />
-        { payload && payload.map(({ name, color, value }) => (
-          <table key={name}>
-            <tbody>
-              <tr>
+        <table>
+          <tbody>
+            { payload && payload.map(({ name, color, value }) => (
+              <tr key={name}>
                 <td width="100px">
                   <span style={{ color, fontSize: 22, marginRight: 10 }}>•</span>
                   <span>{name}</span>
                 </td>
                 <td style={{ marginRight: 10 }}>{value}</td>
               </tr>
-            </tbody>
-          </table>
-        )) }
+            )) }
+          </tbody>
+        </table>
       </div>
     );
   }
