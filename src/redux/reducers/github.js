@@ -44,8 +44,14 @@ const INITIAL_STATE = {
     },
     month_summary: {
       data: {
-        issues: mockLine,
-        pull_requests: mockLine.slice(0, 5),
+        issues: {
+          total: 40,
+          data: mockLine,
+        },
+        pull_requests: {
+          total: 50,
+          data: mockLine.slice(0, 5),
+        },
       },
     },
   },
@@ -61,7 +67,7 @@ export default function (state = INITIAL_STATE, action) {
       return { ...state, dashboard: { ...state.dashboard, average_merge: action.payload } };
     case 'SET_MONTH_SUMARY':
       return { ...state, dashboard: { ...state.dashboard, month_summary: action.payload } };
-    case 'SET_MONTH_SUMARY_ISSUES':
+    case 'SET_MONTH_SUMARY_PULL_REQUESTS':
       return {
         ...state,
         dashboard: {
@@ -69,6 +75,17 @@ export default function (state = INITIAL_STATE, action) {
           month_summary: {
             data:
             { ...state.dashboard.month_summary.data, pull_requests: action.payload },
+          },
+        },
+      };
+    case 'SET_MONTH_SUMARY_ISSUES':
+      return {
+        ...state,
+        dashboard: {
+          ...state.dashboard,
+          month_summary: {
+            data:
+              { ...state.dashboard.month_summary.data, issues: action.payload },
           },
         },
       };

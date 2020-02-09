@@ -12,7 +12,7 @@ export default function Tabs({ data, options }) {
       <Row className="month-summary">
         <Col xl={3} xs={9}>
           <Row>
-            { options.map(({ key, title }, index) => (
+            { options.map(({ key, title, subTitle }) => (
               <Col key={key} className={option === key ? 'active' : ''}>
                 <button
                   type="button"
@@ -20,7 +20,7 @@ export default function Tabs({ data, options }) {
                 >
                   {title}
                 </button>
-                <p>{38 * (index + 1)}</p>
+                <p>{subTitle && typeof subTitle === 'function' ? subTitle(data[key]) : null}</p>
               </Col>
             )) }
           </Row>
@@ -28,7 +28,7 @@ export default function Tabs({ data, options }) {
         <Switch>
           { options.map(({ key, props, Component }) => (
             <Case key={key} condition={key === option}>
-              <Component data={data[key] || []} {...props} />
+              <Component data={data[key] && data[key].data ? data[key].data : []} {...props} />
             </Case>
           )) }
         </Switch>

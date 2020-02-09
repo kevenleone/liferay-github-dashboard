@@ -7,6 +7,18 @@ function getPullRequestSize(total = 0) {
   return a;
 }
 
+function groupBy(groups, by) {
+  const dict = {};
+  groups.forEach((group) => {
+    if (dict[group[by]]) {
+      dict[group[by]] = [...dict[group[by]], group];
+    } else {
+      dict[group[by]] = [group];
+    }
+  });
+  return dict;
+}
+
 function timeConverter(ms) {
   const days = Math.floor(ms / (24 * 60 * 60 * 1000));
   const daysms = ms % (24 * 60 * 60 * 1000);
@@ -101,6 +113,7 @@ function normalizePullRequestsMerge(pullRequests) {
 }
 
 export {
+  groupBy,
   constants,
   readProp,
   getAverage,

@@ -57,26 +57,45 @@ const queries = {
     }
   }
   `,
-  searchPullRequests: ({ repo, date }) => `
-  query {
-    search (
-      query: "repo:${repo} is:pr created:>${date}", 
-      type: ISSUE, 
-      last: 100
-    ) {
-      edges {
-        node {
+  search: ({ type = 'pr', repo, date }) => {
+    const searchType = {
+      pr: {
+        type: 'is:pr',
+        query: `
           ... on PullRequest {
             state
             createdAt
             mergedAt
             closedAt
+        }`,
+      },
+      issue: {
+        type: 'is:issue',
+        query: `
+          ... on Issue {
+            state
+            createdAt
+            closedAt
+        }`,
+      },
+    };
+    const selectedType = searchType[type];
+    return `
+      query {
+        search (
+          query: "repo:${repo} ${selectedType.type} created:>${date}", 
+          type: ISSUE, 
+          last: 100
+        ) {
+          edges {
+            node {
+              ${selectedType.query}
+            }
           }
         }
       }
-    }
-  }
-  `,
+  `;
+  },
 };
 
 export default {

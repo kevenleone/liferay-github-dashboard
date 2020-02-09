@@ -25,7 +25,10 @@ export default [
       props: {
         legend: false,
         Chart: BarChart,
-        height: 450,
+        height: 200,
+        cartesianProps: {
+          vertical: false,
+        },
         customTooltip: {
           Component: BarTooltip,
           props: {
@@ -73,9 +76,11 @@ export default [
           {
             key: 'pull_requests',
             title: 'Pull Requests',
+            subTitle: (data) => (data.total),
             Component: MainChart,
             props: {
               Chart: LineChart,
+              height: 400,
               customTooltip: {
                 Component: LineTooltip,
                 props: {
@@ -91,9 +96,11 @@ export default [
           {
             key: 'issues',
             title: 'Issues',
+            subTitle: (data) => (data.total),
             Component: MainChart,
             props: {
               Chart: LineChart,
+              height: 400,
               customTooltip: {
                 Component: LineTooltip,
                 props: {
