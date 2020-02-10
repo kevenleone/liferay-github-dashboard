@@ -19,10 +19,10 @@ You can check the application online on -> https://liferay-github-dashboard.netl
 Graphscript implement the following features
 
 
-- :book: **React Redux** -> Para gerenciamento de estados e side effects com redux-saga
-- :nail_care: **Bootstrap** -> Framework para criação de componentes e interfaces. 
-- :zap: **Axios** -> Para fazer requisições a API V4 do GitHub.
-- :chart_with_upwards_trend: **Recharts** -> Para criação dos gráficos. 
+- :book: **React Redux** -> For state and side effects management with redux-saga
+- :nail_care: **Bootstrap** -> Framework for creation of Components and Interfaces. 
+- :zap: **Axios** -> For request data from Github V4.
+- :chart_with_upwards_trend: **Recharts** -> For creation of Charts. 
 
 ## :house: Getting started
 
@@ -60,3 +60,12 @@ Just add on main array the follow structure:
 This way you can create dynamic charts, without the need of write Javascript code inside the <code>pages/dashboard</code>
 
 The file <code>helpers.js</code> were made to keep the functions and utils for application.
+
+## :page_with_curl: About the Github API
+
+For fetching of Content, the Github API was consumed, **but not all** the data inside a repository. Check the references for data bellow.
+
+* **Fetch Repositories from User**  -> Get in max 200 Repositories
+* **Fetch Pull Requests** -> Get in max last 100 Pull Requests
+* **Fetch Issues** -> Get in max last 100 Issues
+* **Month Summary** -> Get in max last 100 (Issues or Pull Requests) in a period of a month.
