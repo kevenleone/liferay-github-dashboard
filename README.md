@@ -16,7 +16,7 @@ You can check the application online on -> https://liferay-github-dashboard.netl
 
 ## :tada: Features
 
-Graphscript implement the following features
+This project implement the following features
 
 
 - :book: **React Redux** -> For state and side effects management with redux-saga
